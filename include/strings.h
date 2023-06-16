@@ -3038,4 +3038,7 @@ extern const u8 gText_TellHimTheWords[];
 // Nuzlocke & Levelcap
 extern const u8 gText_Birch_Nuzlocke[];
 
+// Move relearner
+extern const u8 gText_Moves_Menu[];
+
 #endif // GUARD_STRINGS_H
