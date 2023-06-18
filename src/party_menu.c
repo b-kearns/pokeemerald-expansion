@@ -2624,6 +2624,20 @@ static void SetPartyMonSelectionActions(struct Pokemon *mons, u8 slotId, u8 acti
     }
 }
 
+// Used very specifically to interact with CanTeachMove to determine if a move is valid for a certain Pokemon
+static bool8 CanLearnMoveBool(u8 input)
+{
+    switch(input)
+    {
+        case 0:
+            return TRUE;
+        case 2:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
 static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 {
     u8 i, j;
@@ -2638,11 +2652,18 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
         {
             if (GetMonData(&mons[slotId], i + MON_DATA_MOVE1) == sFieldMoves[j])
             {
-                AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, j + MENU_FIELD_MOVES);
-                break;
+                if (sFieldMoves[j] != MOVE_FLY) // If Mon already knows FLY, prevent it from being added to action list
+                    if (sFieldMoves[j] != MOVE_FLASH) // If Mon already knows FLASH, prevent it from being added to action list
+                        AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, j + MENU_FIELD_MOVES);
+                        break;
             }
         }
     }
+
+    if (sPartyMenuInternal->numActions < 5 && CanLearnMoveBool(CanTeachMove(&mons[slotId], ITEM_HM02 - ITEM_TM01) == 2)) // If Mon can learn HM02 and action list consists of < 4 moves, add FLY to action list
+        AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, 5 + MENU_FIELD_MOVES);
+    if (sPartyMenuInternal->numActions < 5 && CanLearnMoveBool(CanTeachMove(&mons[slotId], ITEM_HM05 - ITEM_TM01))) // If Mon can learn HM05 and action list consists of < 4 moves, add FLASH to action list
+        AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, 1 + MENU_FIELD_MOVES);
 
     if (!InBattlePike())
     {
