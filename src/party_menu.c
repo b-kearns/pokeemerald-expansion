@@ -2660,9 +2660,9 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
         }
     }
 
-    if (sPartyMenuInternal->numActions < 5 && CanLearnMoveBool(CanTeachMove(&mons[slotId], ITEM_HM02 - ITEM_TM01) == 2)) // If Mon can learn HM02 and action list consists of < 4 moves, add FLY to action list
+    if (sPartyMenuInternal->numActions < 5 && CanLearnMoveBool(CanTeachMove(&mons[slotId], ITEM_HM02 - ITEM_TM01) == 2) && (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE)) // If Mon can learn HM02 and action list consists of < 4 moves, add FLY to action list
         AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, 5 + MENU_FIELD_MOVES);
-    if (sPartyMenuInternal->numActions < 5 && CanLearnMoveBool(CanTeachMove(&mons[slotId], ITEM_HM05 - ITEM_TM01))) // If Mon can learn HM05 and action list consists of < 4 moves, add FLASH to action list
+    if (sPartyMenuInternal->numActions < 5 && CanLearnMoveBool(CanTeachMove(&mons[slotId], ITEM_HM05 - ITEM_TM01)) && (gMapHeader.cave == TRUE) && (!FlagGet(FLAG_SYS_USE_FLASH))) // If Mon can learn HM05 and action list consists of < 4 moves, add FLASH to action list
         AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, 1 + MENU_FIELD_MOVES);
 
     if (!InBattlePike())
